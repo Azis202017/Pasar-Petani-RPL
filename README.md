@@ -1,6 +1,20 @@
-# pasar_petani
+# Pasar Petani
 
-A new Flutter project.
+Pasar Petani is a mobile application that is used to simplify and help human life effectively and efficiently. Pasar Petani takes reference from the Kecipir app and to facilitate the agricultural food trading system, especially in Bandung.
+
+With the continuous increase in prices for agricultural products, Pasar Petani app is an alternative for farmers to sell or promote their agricultural products.
+
+## Koperasi's Features
+|       Features       | Progress |
+|:--------------------:|:--------:|
+|        Login         |   Done   |
+|        Logout        | On-going |
+|       Register       |   Done   |
+|         Home         |   Done   |
+| Memproses Permintaan | On-going |
+| Menerima Permintaan  | On-going |
+|    Mengirim Uang     | On-going |
+
 
 ## Getting Started
 

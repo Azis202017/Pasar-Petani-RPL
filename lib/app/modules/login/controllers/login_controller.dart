@@ -25,25 +25,11 @@ class LoginController extends GetxController {
         storage.write('access_token', response.accessToken);
         Get.toNamed('/home');
       } catch (e) {
-        Get.snackbar('Gagal', 'Login gagal');
+        Get.snackbar('Gagal', e.toString());
         if (kDebugMode) {
-          print(e);
+          print(e.toString());
         }
       }
     }
   }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  //   if (storage.read('access_token') != null) {
-  //     try {
-  //       Get.offNamed('/home');
-  //     } catch (e) {
-  //       if (kDebugMode) {
-  //         print(e);
-  //       }
-  //     }
-  //   }
-  // }
 }

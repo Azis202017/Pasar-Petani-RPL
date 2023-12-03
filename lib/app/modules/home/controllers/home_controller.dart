@@ -14,7 +14,7 @@ class HomeController extends GetxController {
   static const primaryShade1 = Color(0xffD1F3D1);
 
   late Future<void> itemInit;
-  late List<Barang> _listBarang;
+  List<Barang> _listBarang = [];
 
   @override
   void onInit() {
@@ -25,50 +25,45 @@ class HomeController extends GetxController {
     itemInit = refreshListBarang();
   }
 
-  Future refreshListBarang() async {
-    final listBarang = await Permintaan().getAll();
-    _listBarang = listBarang;
-    if (kDebugMode) {
-      print('refreshed');
+  Future<void> refreshListBarang() async {
+    try {
+      final listBarang = await Permintaan().getAll();
+      _listBarang = listBarang;
+      if (kDebugMode) {
+        print('refreshed');
+      }
+      update();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      Get.snackbar('Gagal', e.toString());
+      Get.toNamed('/login');
     }
-    update();
   }
 
   final TabBar tabBar = TabBar(
-      indicatorColor: primaryColor,
-      unselectedLabelColor: bottomNavbarColor,
-      labelColor: primaryColor,
-      labelStyle: GoogleFonts.poppins(
-          color: primaryColor, fontWeight: FontWeight.w400, fontSize: 14),
-      indicator: const UnderlineTabIndicator(
-          borderSide: BorderSide(width: 1.0, color: primaryColor)),
-      tabs: const [
-        Tab(
-          child: Text(
-            "Baru",
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Tab(
-          child: Text(
-            "Proses",
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Tab(
-          child: Text(
-            "Selesai",
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ]);
+    indicatorColor: primaryColor,
+    unselectedLabelColor: bottomNavbarColor,
+    labelColor: primaryColor,
+    labelStyle: GoogleFonts.poppins(
+        color: primaryColor, fontWeight: FontWeight.w400, fontSize: 14),
+    indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(width: 1.0, color: primaryColor)),
+    tabs: const [
+      Tab(child: Text("Baru", textAlign: TextAlign.center)),
+      Tab(child: Text("Proses", textAlign: TextAlign.center)),
+      Tab(child: Text("Selesai", textAlign: TextAlign.center)),
+    ],
+  );
 
-  Widget listItem() {
+  // Getting list of items with context as parameter to get the size of the screen
+  Widget listItem(context) {
     return FutureBuilder(
         future: itemInit,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting &&
-              !snapshot.hasData) {
+          // If connection state is waiting, show loading indicator
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const TabBarView(children: [
               Center(child: CircularProgressIndicator()),
               Center(child: CircularProgressIndicator()),
@@ -76,30 +71,14 @@ class HomeController extends GetxController {
             ]);
           }
 
+          // If connection state is done and snapshot has error, show error message
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
+            final errorMessage = snapshot.error?.toString() ?? 'Unknown error';
             return TabBarView(children: [
-              Center(
-                  child: Column(
-                children: [
-                  const Text('Error'),
-                  Text(snapshot.error.toString()),
-                ],
-              )),
-              Center(
-                  child: Column(
-                children: [
-                  const Text('Error'),
-                  Text(snapshot.error.toString()),
-                ],
-              )),
-              Center(
-                  child: Column(
-                children: [
-                  const Text('Error'),
-                  Text(snapshot.error.toString()),
-                ],
-              )),
+              Center(child: Text(errorMessage)),
+              Center(child: Text(errorMessage)),
+              Center(child: Text(errorMessage)),
             ]);
           }
 
@@ -113,86 +92,40 @@ class HomeController extends GetxController {
             if (item.currentStatus == null) {
               continue;
             }
-            switch (item.currentStatus!.status) {
-              case "Baru":
-                {
-                  statusBarang['baru']!.add(item);
-                }
-                continue;
-              case "Proses":
-                {
-                  statusBarang['proses']!.add(item);
-                }
-                continue;
-              case "Selesai":
-                {
-                  statusBarang['selesai']!.add(item);
-                }
-                continue;
-            }
+            statusBarang[item.currentStatus!.status.toLowerCase()]?.add(item);
           }
 
           return TabBarView(children: [
-            statusBarang['baru']!.isEmpty
-                ? RefreshIndicator(
-                    onRefresh: () async => {refreshListBarang()},
-                    child: const SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child: EmptyState()),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
-                    child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: statusBarang['baru']!.length,
-                        itemBuilder: (context, index) {
-                          return ItemCard(
-                              productName: statusBarang['baru']![index].name,
-                              farmerName:
-                                  statusBarang['baru']![index].petani['name'],
-                              picture: NetworkImage(
-                                  statusBarang['baru']![index].foto),
-                              date: statusBarang['baru']![index].createdAt);
-                        }),
-                  ),
-            statusBarang['proses']!.isEmpty
-                ? const EmptyState()
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
-                    child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: statusBarang['proses']!.length,
-                        itemBuilder: (context, index) {
-                          return ItemCard(
-                              productName: statusBarang['proses']![index].name,
-                              farmerName:
-                                  statusBarang['proses']![index].petani['name'],
-                              picture: NetworkImage(
-                                  statusBarang['proses']![index].foto),
-                              date: statusBarang['proses']![index].createdAt);
-                        }),
-                  ),
-            statusBarang['selesai']!.isEmpty
-                ? const EmptyState()
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
-                    child: ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount: statusBarang['selesai']!.length,
-                        itemBuilder: (context, index) {
-                          return ItemCard(
-                              productName: statusBarang['selesai']![index].name,
-                              farmerName: statusBarang['selesai']![index]
-                                  .petani['name'],
-                              picture: NetworkImage(
-                                  statusBarang['selesai']![index].foto),
-                              date: statusBarang['selesai']![index].createdAt);
-                        }),
-                  ),
+            _buildListTab(statusBarang['baru']!, context),
+            _buildListTab(statusBarang['proses']!, context),
+            _buildListTab(statusBarang['selesai']!, context),
           ]);
         });
+  }
+
+  Widget _buildListTab(List<Barang> items, context) {
+    return RefreshIndicator(
+      onRefresh: refreshListBarang,
+      child: items.isEmpty
+          ? SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  child: const EmptyState()),
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return ItemCard(
+                  productName: item.name,
+                  farmerName: item.petani['name'],
+                  picture: NetworkImage(item.foto),
+                  date: item.createdAt,
+                );
+              },
+            ),
+    );
   }
 }

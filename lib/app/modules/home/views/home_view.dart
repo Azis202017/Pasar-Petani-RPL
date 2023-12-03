@@ -54,7 +54,8 @@ class HomeView extends GetView<HomeController> {
                     ))),
           ),
           body: Container(
-              color: CustomColors.accentColor, child: controller.listItem()),
+              color: CustomColors.accentColor,
+              child: controller.listItem(context)),
         ));
   }
 }

@@ -32,12 +32,11 @@ class Permintaan extends http.BaseClient {
     }
 
     if (response.statusCode == 200) {
-      if (jsonDecode(response.body)['data'].length == 0) {
+      if (jsonDecode(response.body)['data'].isEmpty) {
         return [];
       }
-      return jsonDecode(response.body)
-          .map<Barang>((json) => Barang.fromJson(json['data']))
-          .toList();
+      return List<Barang>.from(
+          jsonDecode(response.body)['data'].map((x) => Barang.fromJson(x)));
     } else {
       throw Exception(jsonDecode(response.body)['message']);
     }

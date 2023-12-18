@@ -89,10 +89,11 @@ class HomeController extends GetxController {
           };
 
           for (var item in _listBarang) {
-            if (item.currentStatus == null) {
+            if (item.status.isEmpty) {
+              statusBarang['baru']?.add(item);
               continue;
             }
-            statusBarang[item.currentStatus!.status.toLowerCase()]?.add(item);
+            statusBarang[item.status.last.status.toLowerCase()]?.add(item);
           }
 
           return TabBarView(children: [

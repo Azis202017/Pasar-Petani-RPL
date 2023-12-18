@@ -20,8 +20,8 @@ class Status {
   factory Status.fromJson(Map<String, dynamic> json) {
     return Status(
       id: json['id'],
-      idPermintaan: json['id_permintaan'],
-      keterangan: json['keterangan'],
+      idPermintaan: int.parse(json['id_permintaan']),
+      keterangan: json['keterangan'] ?? '',
       tanggalPerubahan: json['tanggal_perubahan'],
       status: json['status'],
       createdAt: json['created_at'],

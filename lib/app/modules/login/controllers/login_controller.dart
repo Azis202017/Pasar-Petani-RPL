@@ -26,9 +26,6 @@ class LoginController extends GetxController {
         Get.toNamed('/home');
       } catch (e) {
         Get.snackbar('Gagal', e.toString());
-        if (kDebugMode) {
-          print(e.toString());
-        }
       }
     }
   }

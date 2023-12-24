@@ -41,4 +41,21 @@ class Permintaan extends http.BaseClient {
       throw Exception(jsonDecode(response.body)['message']);
     }
   }
+
+  Future<Barang> detail(String id) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/permintaan/$id'),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print(response.body);
+    }
+
+    if (response.statusCode == 200) {
+      return Barang.fromJson(jsonDecode(response.body)['data']);
+    } else {
+      throw Exception(jsonDecode(response.body)['message']);
+    }
+  }
 }

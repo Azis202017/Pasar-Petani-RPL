@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:pasar_petani/app/models/barang.dart';
 
 class ItemCard extends StatelessWidget {
-  final String productName;
-  final String farmerName;
-  final ImageProvider<Object> picture;
-  final DateTime date;
+  final Barang barang;
 
   const ItemCard({
     super.key,
-    required this.productName,
-    required this.farmerName,
-    required this.picture,
-    required this.date,
+    required this.barang,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String dateString = DateFormat('dd MMMM yyyy').format(date);
+    final String dateString = DateFormat('dd MMMM yyyy').format(
+        barang.status.isNotEmpty
+            ? barang.status.last.updatedAt
+            : barang.createdAt);
     return GestureDetector(
-      onTap: () => {Get.toNamed('/product-detail')},
+      onTap: () => {
+        Get.toNamed('/product-detail', arguments: {'barang': barang})
+      },
       child: Container(
         height: 96,
         margin: const EdgeInsets.only(bottom: 12),
@@ -38,7 +38,7 @@ class ItemCard extends StatelessWidget {
                 height: 68,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: picture,
+                      image: NetworkImage(barang.fotoUrl),
                       filterQuality: FilterQuality.low,
                       alignment: Alignment.center,
                       fit: BoxFit.contain),
@@ -52,7 +52,7 @@ class ItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      productName,
+                      barang.name,
                       style: GoogleFonts.poppins(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
@@ -62,7 +62,7 @@ class ItemCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 2),
                       child: Text(
-                        farmerName,
+                        barang.petani['nama'],
                         style: GoogleFonts.poppins(
                             color: const Color(0xffAAAAAA),
                             fontSize: 12,

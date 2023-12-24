@@ -91,9 +91,23 @@ class HomeController extends GetxController {
           for (var item in _listBarang) {
             if (item.status.isEmpty) {
               statusBarang['baru']?.add(item);
-              continue;
+            } else {
+              switch (item.status.last.status.toLowerCase()) {
+                case 'diproses':
+                  statusBarang['proses']?.add(item);
+                  break;
+                case 'ditolak':
+                  statusBarang['selesai']?.add(item);
+                  break;
+                case 'selesai':
+                  statusBarang['selesai']?.add(item);
+                  break;
+                default:
+                  statusBarang[item.status.last.status.toLowerCase()]
+                      ?.add(item);
+                  break;
+              }
             }
-            statusBarang[item.status.last.status.toLowerCase()]?.add(item);
           }
 
           return TabBarView(children: [
@@ -120,10 +134,7 @@ class HomeController extends GetxController {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return ItemCard(
-                  productName: item.name,
-                  farmerName: item.petani['name'],
-                  picture: NetworkImage(item.foto),
-                  date: item.createdAt,
+                  barang: item,
                 );
               },
             ),

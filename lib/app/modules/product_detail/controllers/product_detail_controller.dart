@@ -1,11 +1,6 @@
 import 'package:get/get.dart';
+import 'package:pasar_petani/app/models/barang.dart';
 
 class ProductDetailController extends GetxController {
-  //TODO: Implement ProductDetailController
-
-  final count = 0.obs;
-
-
-
-  void increment() => count.value++;
+  Barang detailProduct = Get.arguments['barang'];
 }
